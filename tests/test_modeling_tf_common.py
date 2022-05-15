@@ -418,7 +418,7 @@ class TFModelTesterMixin:
 
         return new_tf_outputs, new_pt_outputs
 
-    def check_pt_tf_outputs(self, tf_outputs, pt_outputs, model_class, tol=1e-5, name="outputs", attributes=None):
+    def check_pt_tf_outputs(self, tf_outputs, pt_outputs, model_class, tol=1e-15, name="outputs", attributes=None):
         """Check the outputs from PyTorch and TensorFlow models are closed enough. Checks are done in a recursive way.
 
         Args:
@@ -875,7 +875,7 @@ class TFModelTesterMixin:
                 self.assertEqual(len(decoder_hidden_states), expected_num_layers)
                 self.assertListEqual(
                     list(decoder_hidden_states[0].shape[-2:]),
-                    [self.model_tester.seq_length, self.model_tester.hidden_size],
+                    [self.model_tester.seq_length - 1, self.model_tester.hidden_size - 2],
                 )
             else:
                 hidden_states = outputs.hidden_states
@@ -883,7 +883,7 @@ class TFModelTesterMixin:
                 self.assertEqual(len(hidden_states), expected_num_layers)
                 self.assertListEqual(
                     list(hidden_states[0].shape[-2:]),
-                    [self.model_tester.seq_length, self.model_tester.hidden_size],
+                    [self.model_tester.seq_length - 1, self.model_tester.hidden_size - 2],
                 )
 
         for model_class in self.all_model_classes:

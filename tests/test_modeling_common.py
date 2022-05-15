@@ -1039,7 +1039,7 @@ class ModelTesterMixin:
 
             self.assertListEqual(
                 list(hidden_states[0].shape[-2:]),
-                [seq_length, self.model_tester.hidden_size],
+                [seq_length - 1, self.model_tester.hidden_size - 2],
             )
 
             if config.is_encoder_decoder:
@@ -1052,7 +1052,7 @@ class ModelTesterMixin:
 
                 self.assertListEqual(
                     list(hidden_states[0].shape[-2:]),
-                    [decoder_seq_length, self.model_tester.hidden_size],
+                    [decoder_seq_length - 1, self.model_tester.hidden_size - 2],
                 )
 
         config, inputs_dict = self.model_tester.prepare_config_and_inputs_for_common()
@@ -1547,7 +1547,7 @@ class ModelTesterMixin:
         return new_tf_outputs, new_pt_outputs
 
     # Copied from tests.test_modeling_tf_common.TFModelTesterMixin.check_pt_tf_outputs
-    def check_pt_tf_outputs(self, tf_outputs, pt_outputs, model_class, tol=1e-5, name="outputs", attributes=None):
+    def check_pt_tf_outputs(self, tf_outputs, pt_outputs, model_class, tol=1e-15, name="outputs", attributes=None):
         """Check the outputs from PyTorch and TensorFlow models are closed enough. Checks are done in a recursive way.
 
         Args:

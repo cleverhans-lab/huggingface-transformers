@@ -3,16 +3,7 @@ name: Self-hosted runner (push)
 on:
   push:
     branches:
-      - main
-      - ci_*
-      - ci-*
-    paths:
-      - "src/**"
-      - "tests/**"
-      - ".github/**"
-      - "templates/**"
-      - "utils/**"
-  repository_dispatch:
+      - test_fix_ci_report_job_button
 
 env:
   HF_HOME: /mnt/cache
@@ -61,7 +52,7 @@ jobs:
         # If no test to run (so no `test_map.json` file), create a dummy map (empty matrix will fail)
         run: |
           if [ -f test_map.json ]; then
-              keys=$(python3 -c 'import json; fp = open("test_map.json"); test_map = json.load(fp); fp.close(); d = list(test_map.keys()); print(d)')
+              keys=$(python3 -c 'import json; fp = open("test_map.json"); test_map = json.load(fp); fp.close(); d = list(test_map.keys()); d = d[:7]; print(d)')
               test_map=$(python3 -c 'import json; fp = open("test_map.json"); test_map = json.load(fp); fp.close(); print(test_map)')
           else
               keys=$(python3 -c 'keys = ["dummy"]; print(keys)')
@@ -311,7 +302,7 @@ jobs:
           CI_SLACK_CHANNEL_ID: ${{ secrets.CI_SLACK_CHANNEL_ID }}
           CI_SLACK_CHANNEL_ID_DAILY: ${{ secrets.CI_SLACK_CHANNEL_ID_DAILY }}
           CI_SLACK_CHANNEL_DUMMY_TESTS: ${{ secrets.CI_SLACK_CHANNEL_DUMMY_TESTS }}
-          CI_SLACK_REPORT_CHANNEL_ID: ${{ secrets.CI_SLACK_CHANNEL_ID }}
+          CI_SLACK_REPORT_CHANNEL_ID: ${{ secrets.CI_SLACK_CHANNEL_DUMMY_TESTS }}
           CI_EVENT: push
           CI_TITLE: ${{ github.event.head_commit.message }}
           CI_COMMIT_URL: ${{ github.event.head_commit.url }}
