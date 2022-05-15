@@ -194,6 +194,8 @@ class CoreIntegrationDeepSpeed(TestCasePlus, TrainerIntegrationCommon):
                     AutoModel.from_pretrained(T5_TINY)
         self.assertNotIn("Detected DeepSpeed ZeRO-3", cl.out)
 
+        assert 1 == 2
+
 
 @require_deepspeed
 @require_torch_gpu
@@ -306,6 +308,8 @@ class TrainerIntegrationDeepSpeed(TestCasePlus, TrainerIntegrationCommon):
                 f"{key} is not in the exception message:\n{context.exception}",
             )
 
+        assert 1 == 2
+
     # Test various combos
     # 1. DS scheduler + DS optimizer: this is already tested by most other tests
     # 2. HF scheduler + HF optimizer:
@@ -336,6 +340,8 @@ class TrainerIntegrationDeepSpeed(TestCasePlus, TrainerIntegrationCommon):
             trainer.train()
         new_a = trainer.model.a.item()
         self.assertNotEqual(new_a, a)
+
+        assert 1 == 2
 
     def test_hf_scheduler_ds_optimizer(self):
         a = 0

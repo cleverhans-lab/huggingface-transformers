@@ -94,15 +94,21 @@ class TestTrainerExt(TestCasePlus):
     def test_run_seq2seq_no_dist(self):
         self.run_seq2seq_quick()
 
+        assert 1 == 2
+
     # verify that the trainer can handle non-distributed with n_gpu > 1
     @require_torch_multi_gpu
     def test_run_seq2seq_dp(self):
         self.run_seq2seq_quick(distributed=False)
 
+        assert 1 == 2
+
     # verify that the trainer can handle distributed with n_gpu > 1
     @require_torch_multi_gpu
     def test_run_seq2seq_ddp(self):
         self.run_seq2seq_quick(distributed=True)
+
+        assert 1 == 2
 
     # test --sharded_ddp w/o --fp16
     @unittest.skip("Requires an update of the env running those tests")
