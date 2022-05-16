@@ -31,8 +31,11 @@ import transformers
 from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
+    BertForSequenceClassification,
+    BertModel,
     AutoTokenizer,
     BertTokenizer,
+    BertConfig,
     DataCollatorWithPadding,
     EvalPrediction,
     HfArgumentParser,
@@ -343,14 +346,14 @@ def main():
     #
     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
-    config = AutoConfig.from_pretrained(
-        model_args.config_name if model_args.config_name else model_args.model_name_or_path,
-        num_labels=num_labels,
-        finetuning_task=data_args.task_name,
-        cache_dir=model_args.cache_dir,
-        revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
-    )
+    # config = AutoConfig.from_pretrained(
+    #     model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+    #     num_labels=num_labels,
+    #     finetuning_task=data_args.task_name,
+    #     cache_dir=model_args.cache_dir,
+    #     revision=model_args.model_revision,
+    #     use_auth_token=True if model_args.use_auth_token else None,
+    # )
     # tokenizer = AutoTokenizer.from_pretrained(
     #     model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
     #     cache_dir=model_args.cache_dir,
@@ -362,14 +365,50 @@ def main():
     # Use the tokenizer we used to tokenize Wikipedia and Bookcorpus dataset
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-        revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
+    # ORIGINAL CODE
+    # model = AutoModelForSequenceClassification.from_pretrained(
+    # model_args.model_name_or_path,
+    # from_tf=bool(".ckpt" in model_args.model_name_or_path),
+    # config=config,
+    # cache_dir=model_args.cache_dir,
+    # revision=model_args.model_revision,
+    # use_auth_token=True if model_args.use_auth_token else None,
+    # )
+
+    # Method YANNIS
+    # model_config = BertModel.from_pretrained(model_args.model_name_or_path).config
+    # model = BertForSequenceClassification(model_config)
+    
+    # Method ADAM
+    # model_config = BertModel.from_pretrained(model_args.model_name_or_path).config
+    # model_config.name_or_path=None
+    # model = BertForSequenceClassification(config=model_config)
+
+    # FINAL method
+    config = BertConfig(
+        attention_probs_dropout_prob=0.1,
+        classifier_dropout=None,
+        hidden_act='gelu',
+        hidden_dropout_prob=0.1,
+        hidden_size=128,
+        initializer_range=0.02,
+        intermediate_size=512,
+        layer_norm_eps=1e-12,
+        max_position_embeddings=512,
+        model_type='bert',
+        num_attention_heads=2,
+        num_hidden_layers=2,
+        pad_token_id=0,
+        position_embedding_type="absolute",
+        transformers_version="4.18.0",
+        type_vocab_size=2,
+        use_cache=True,
+        vocab_size=30522
     )
+
+    model = BertForSequenceClassification(config=config)
+
+
 
     # Preprocessing the raw_datasets
     if data_args.task_name is not None:
