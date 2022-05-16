@@ -375,17 +375,9 @@ def main():
     # use_auth_token=True if model_args.use_auth_token else None,
     # )
 
-    # Method YANNIS
-    # model_config = BertModel.from_pretrained(model_args.model_name_or_path).config
-    # model = BertForSequenceClassification(model_config)
-    
-    # Method ADAM
-    # model_config = BertModel.from_pretrained(model_args.model_name_or_path).config
-    # model_config.name_or_path=None
-    # model = BertForSequenceClassification(config=model_config)
-
-    # FINAL method
+    # FINAL method for random model with TinyBert architecture (n°1)
     config = BertConfig(
+        _name_or_path="",
         attention_probs_dropout_prob=0.1,
         classifier_dropout=None,
         hidden_act='gelu',
@@ -395,7 +387,7 @@ def main():
         intermediate_size=512,
         layer_norm_eps=1e-12,
         max_position_embeddings=512,
-        model_type='bert',
+        # model_type='bert',
         num_attention_heads=2,
         num_hidden_layers=2,
         pad_token_id=0,
@@ -403,12 +395,18 @@ def main():
         transformers_version="4.18.0",
         type_vocab_size=2,
         use_cache=True,
-        vocab_size=30522
+        vocab_size=30522,
+        num_labels=num_labels
     )
-
     model = BertForSequenceClassification(config=config)
 
+    # FINAL method for pre-trained google TinyBert (n°2)
+    # model = BertForSequenceClassification.from_pretrained('prajjwal1/bert-tiny', num_labels=num_labels)
+    # config = model.config
 
+    # FINAL method for loading a local trained model (n°3) or stolen model (n°4) from a path  
+    # model = BertForSequenceClassification.from_pretrained(model_args.model_name_or_path, num_labels=num_labels)
+    # config = model.config
 
     # Preprocessing the raw_datasets
     if data_args.task_name is not None:
